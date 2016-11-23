@@ -3,10 +3,7 @@ package homo.efficio.spring.web.api.test.stubber.factory_example.processor;
 import com.google.auto.service.AutoService;
 import homo.efficio.spring.web.api.test.stubber.factory_example.annotation.Factory;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -20,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author omwomw@sk.com
+ * @author homo.efficio@gmail.com
  *         created on 2016. 11. 21.
  */
 @AutoService(Process.class)
@@ -33,11 +30,16 @@ public class FactoryProcessor extends AbstractProcessor {
     private Map<String, FactoryGroupedClasses> factoryClasses;
 
     public FactoryProcessor() {
+    }
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
         typeUtils = processingEnv.getTypeUtils();
         elementUtils = processingEnv.getElementUtils();
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
-        factoryClasses = new LinkedHashMap<String, FactoryGroupedClasses>();
+        factoryClasses = new LinkedHashMap<>();
     }
 
     @Override

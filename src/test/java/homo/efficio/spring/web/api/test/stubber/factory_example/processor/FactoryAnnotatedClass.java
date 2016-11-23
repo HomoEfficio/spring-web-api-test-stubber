@@ -8,7 +8,8 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 
 /**
- * Created by homo.efficio@gmail.com on 2016. 11. 23..
+ * @author homo.efficio@gmail.com
+ *         created on 2016. 11. 23.
  */
 public class FactoryAnnotatedClass {
 

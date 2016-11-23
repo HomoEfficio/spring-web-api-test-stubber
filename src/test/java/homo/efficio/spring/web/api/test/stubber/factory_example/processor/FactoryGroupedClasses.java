@@ -4,8 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @author omwomw@sk.com
- *         created on 2016. 11. 22.
+ * @author homo.efficio@gmail.com
+ *         created on 2016. 11. 23.
  */
 public class FactoryGroupedClasses {
 

@@ -1,11 +1,11 @@
 package homo.efficio.spring.web.api.test.stubber.factory_example.processor;
 
-import com.sun.tools.javac.api.JavacTool;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class AbstractProcessorTest {
 
-    private final JavaCompiler compiler = JavacTool.create();
+    private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     protected static List<String> getFiles(String path) {
         List<String> classes = new ArrayList<String>();
@@ -61,7 +61,6 @@ public class AbstractProcessorTest {
 
 //        Processor.elementCache.clear();
         if (compilationResult != 0) {
-            System.err.println(compiler.getClass().getName());
             Assert.fail("Compilation Failed:\n " + new String(err.toByteArray(), "UTF-8"));
         }
     }

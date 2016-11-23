@@ -15,6 +15,7 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile group: 'com.google.auto.service', name: 'auto-service', version: '1.0-rc2'
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'org.springframework', name: 'spring-web', version: '4.3.4.RELEASE'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

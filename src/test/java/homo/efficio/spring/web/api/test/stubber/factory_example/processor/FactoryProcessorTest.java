@@ -26,7 +26,7 @@ public class FactoryProcessorTest extends AbstractProcessorTest {
 
         process(FactoryProcessor.class,
                 getFileNamesIn(PACKAGE_PATH),
-                "test-stbber"
+                "test-stubber"
         );
 //        File file = new File(PACKAGE_PATH, "CalzonePizza.java");
 //        process(FactoryProcessor.class, Collections.singletonList(file.getPath()), "test-stubber");

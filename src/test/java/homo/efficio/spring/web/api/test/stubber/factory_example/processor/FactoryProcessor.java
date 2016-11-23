@@ -67,6 +67,8 @@ public class FactoryProcessor extends AbstractProcessor {
             }
 
             TypeElement typeElement = (TypeElement) annotatedElement;
+
+            FactoryAnnotatedClass factoryAnnotatedClass = new FactoryAnnotatedClass(typeElement);
         }
 
         return true;

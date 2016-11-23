@@ -57,8 +57,9 @@ public class FactoryProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
+        System.out.println("--------");
         for (Element annotatedElement: roundEnv.getElementsAnnotatedWith(Factory.class)) {
-
+            System.out.println(annotatedElement);
             if (annotatedElement.getKind() != ElementKind.CLASS) {
                 error(annotatedElement, "Only classes can be annotated with @%s",
                         Factory.class.getSimpleName());

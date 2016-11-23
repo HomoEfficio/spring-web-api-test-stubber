@@ -1,6 +1,6 @@
-package homo.efficio.spring.web.api.test.stubber.processor.factory;
+package homo.efficio.spring.web.api.test.stubber.factory_example.processor;
 
-import homo.efficio.spring.web.api.test.stubber.annotation.factory.Factory;
+import homo.efficio.spring.web.api.test.stubber.factory_example.annotation.Factory;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.TypeElement;

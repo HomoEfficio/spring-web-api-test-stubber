@@ -1,4 +1,4 @@
-package homo.efficio.spring.web.api.test.stubber.annotation.factory;
+package homo.efficio.spring.web.api.test.stubber.factory_example.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

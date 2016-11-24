@@ -27,8 +27,9 @@ public class ExtractedRestController {
         RestController restControllerAnnotation = annotatedClassElement.getAnnotation(RestController.class);
         this.annotationValue = restControllerAnnotation.value();
 
-        Optional<RequestMapping> optReqMappingAnnotation = Optional.ofNullable(annotatedClassElement.getAnnotation(RequestMapping.class));
-        optReqMappingAnnotation.ifPresent(o -> this.reqMappedURL = o.value());
+        this.reqMappedURL = Optional.ofNullable(annotatedClassElement.getAnnotation(RequestMapping.class))
+                                    .map(RequestMapping::value)
+                                    .orElse(new String[] {});
 
 //        if (StringUtils.isEmpty(annotationValue)) {
 //            throw new IllegalArgumentException(
@@ -50,5 +51,13 @@ public class ExtractedRestController {
             qualifiedClassName = classTypeElement.getQualifiedName().toString();
             simpleClassName = classTypeElement.getSimpleName().toString();
         }
+    }
+
+    public TypeElement getAnnotatedClassElement() {
+        return annotatedClassElement;
+    }
+
+    public String[] getReqMappedURL() {
+        return reqMappedURL;
     }
 }

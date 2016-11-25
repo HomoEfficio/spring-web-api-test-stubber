@@ -1,7 +1,6 @@
 package homo.efficio.spring.web.api.test.stubber.restcontroller.processor;
 
-import homo.efficio.spring.web.api.test.stubber.factory_example.annotation.Factory;
-import homo.efficio.spring.web.api.test.stubber.factory_example.processor.FactoryAnnotatedClass;
+import homo.efficio.spring.web.api.test.stubber.generator.SpringMvcControllerGenerator;
 import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.ExtractedRestController;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,19 +35,25 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
                         RestController.class.getSimpleName());
                 return true;
             }
-            System.out.println(annotatedElement);
+            // @RequestMapping 붙은 클래스
             TypeElement typeElement = (TypeElement) annotatedElement;
 
+            // 분석용 래퍼 클래스
             ExtractedRestController annotatedClass = new ExtractedRestController(typeElement);
 
-            // TODO: 메서드에 붙은 @RequestMapping B 추출
-
-            // TODO: 앞에서 구한 reqMappedURLs + B 로 api endpoint C를 구하고
-            // TODO: B의 method를 추출해서 method 별로 C에 대한 테스트 코드 생성
-            // TODO: 클래스 단위로 파일 생성
+            // TODO 래퍼 클래스 던져주고 stub 생성
+            generateStubFiles(annotatedClass);
         }
 
         return false;
+    }
+
+    private void generateStubFiles(ExtractedRestController annotatedClass) {
+        // TODO  stub 파일 생성
+
+        SpringMvcControllerGenerator springMvcControllerGenerator = new SpringMvcControllerGenerator(annotatedClass);
+
+
     }
 
     @Override

@@ -91,8 +91,6 @@ public class ExtractedRestController {
                     .filter(m -> Objects.nonNull(m.getAnnotation(annotation)))
                     .collect(Collectors.toList());
         }
-
-        ((Symbol.ClassSymbol) annotatedClassElement).members().getElements().forEach(s -> System.out.println(s));
         return Collections.emptyList();
     }
 }

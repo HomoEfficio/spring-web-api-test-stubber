@@ -30,7 +30,7 @@ public class RestControllerProcessorTest {
 
     @Test
     public void process() throws IOException {
-        System.out.println("==== " + count++ + " ====");
+        System.out.println("==== " + count++ + "th round ====");
         System.out.println(getFileNamesIn(SRC_PACKAGE_PATH));
 
         process(RestControllerProcessor.class,

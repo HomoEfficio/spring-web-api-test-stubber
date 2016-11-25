@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping({"/api/v1/members", "/api/v2/members"})
 public class MemberController {
 
+    private Object dummyObject;
+
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
     public Member save(@RequestBody Member member) {
         return member;
@@ -22,6 +24,10 @@ public class MemberController {
 
     @RequestMapping(value = "/{userName}", method = RequestMethod.DELETE)
     public void deleteMember(@PathVariable("userName") String userName) {
+
+    }
+
+    private void dummyMethod() {
 
     }
 

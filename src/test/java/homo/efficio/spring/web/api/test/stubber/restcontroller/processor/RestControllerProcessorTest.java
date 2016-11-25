@@ -20,8 +20,6 @@ public class RestControllerProcessorTest {
 
     private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
-
-
     private Collection<String> getAPTOptions() {
         return Collections.emptyList();
     }

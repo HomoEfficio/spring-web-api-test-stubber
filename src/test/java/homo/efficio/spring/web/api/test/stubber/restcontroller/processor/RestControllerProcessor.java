@@ -41,7 +41,11 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
 
             ExtractedRestController annotatedClass = new ExtractedRestController(typeElement);
 
+            // TODO: 메서드에 붙은 @RequestMapping B 추출
 
+            // TODO: 앞에서 구한 reqMappedURLs + B 로 api endpoint C를 구하고
+            // TODO: B의 method를 추출해서 method 별로 C에 대한 테스트 코드 생성
+            // TODO: 클래스 단위로 파일 생성
         }
 
         return false;

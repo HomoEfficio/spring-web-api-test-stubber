@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,7 +20,7 @@ public class ExtractedRestController {
     private String qualifiedClassName;
     private String simpleClassName;
     private String annotationValue;
-    private String[] reqMappedURL;
+    private String[] reqMappedURLs;
 
     public ExtractedRestController(TypeElement annotatedClassElement) {
         this.annotatedClassElement = annotatedClassElement;
@@ -27,9 +28,9 @@ public class ExtractedRestController {
         RestController restControllerAnnotation = annotatedClassElement.getAnnotation(RestController.class);
         this.annotationValue = restControllerAnnotation.value();
 
-        this.reqMappedURL = Optional.ofNullable(annotatedClassElement.getAnnotation(RequestMapping.class))
-                                    .map(RequestMapping::value)
-                                    .orElse(new String[] {});
+        this.reqMappedURLs = Optional.ofNullable(annotatedClassElement.getAnnotation(RequestMapping.class))
+                                     .map(RequestMapping::value)
+                                     .orElse(new String[] {});
 
 //        if (StringUtils.isEmpty(annotationValue)) {
 //            throw new IllegalArgumentException(
@@ -37,9 +38,10 @@ public class ExtractedRestController {
 //                            RestController.class.getSimpleName(), annotatedClassElement.getQualifiedName().toString()));
 //        }
 
-        if (StringUtils.isNoneEmpty(reqMappedURL)) {
-            System.out.println("  reqMappedURL: [" + String.join(", ", reqMappedURL) + "]");
+        if (StringUtils.isNoneEmpty(reqMappedURLs)) {
+            System.out.println("  reqMappedURLs: [" + String.join(", ", reqMappedURLs) + "]");
         }
+
 
         try {
             Class<?> clazz = restControllerAnnotation.getClass();
@@ -57,7 +59,7 @@ public class ExtractedRestController {
         return annotatedClassElement;
     }
 
-    public String[] getReqMappedURL() {
-        return reqMappedURL;
+    public String[] getReqMappedURLs() {
+        return reqMappedURLs;
     }
 }

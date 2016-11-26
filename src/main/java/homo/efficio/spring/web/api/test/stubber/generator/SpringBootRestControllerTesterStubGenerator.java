@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,7 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,25 +170,49 @@ public class SpringBootRestControllerTesterStubGenerator {
     }
 
     private MethodSpec createApiTestMethodSpec(String methodName, String apiUrl, RequestMethod reqMethod) {
-        return MethodSpec.methodBuilder(methodName + TEST_METHOD_SUFFIX)
+        MethodSpec.Builder methodBuilder =
+                MethodSpec.methodBuilder(methodName + TEST_METHOD_SUFFIX)
                 .addAnnotation(Test.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(void.class)
-                .addException(Exception.class)
-                .addCode("" +
-                        "$T result = mockMvc.perform(\n" +
-                        "        $L($S)\n" +
-                        ").andExpect(\n" +
-                        "        status().isOk()\n" +
-                        ").andExpect(\n" +
-                        "        jsonPath($S).value($S)\n" +
-                        ").andReturn();\n",
-                        MvcResult.class,
-                        reqMethod.name().toLowerCase(),
-                        apiUrl,
-                        "$.YOURKEY",
-                        "EXPECTED_VALUE"
-                )
-                .build();
+                .addException(Exception.class);
+
+        if (RequestMethod.POST.equals(reqMethod) || RequestMethod.PUT.equals(reqMethod)) {
+            return methodBuilder
+                    .addCode("" +
+                            "$T result = mockMvc.perform(\n" +
+                            "        $L($S)\n" +
+                            "                .contentType($S)\n" +
+                            "                .content($S)\n" +
+                            ").andExpect(\n" +
+                            "        status().isOk()\n" +
+                            ").andExpect(\n" +
+                            "        jsonPath($S).value($S)\n" +
+                            ").andReturn();\n",
+                            MvcResult.class,
+                            reqMethod.name().toLowerCase(),
+                            apiUrl,
+                            MediaType.APPLICATION_JSON_UTF8,
+                            "YOUR_JSON_STRING",
+                            "$.YOURKEY",
+                            "EXPECTED_VALUE"
+                    ).build();
+        } else {
+            return methodBuilder
+                    .addCode("" +
+                                    "$T result = mockMvc.perform(\n" +
+                                    "        $L($S)\n" +
+                                    ").andExpect(\n" +
+                                    "        status().isOk()\n" +
+                                    ").andExpect(\n" +
+                                    "        jsonPath($S).value($S)\n" +
+                                    ").andReturn();\n",
+                            MvcResult.class,
+                            reqMethod.name().toLowerCase(),
+                            apiUrl,
+                            "$.YOURKEY",
+                            "EXPECTED_VALUE"
+                    ).build();
+        }
     }
 }

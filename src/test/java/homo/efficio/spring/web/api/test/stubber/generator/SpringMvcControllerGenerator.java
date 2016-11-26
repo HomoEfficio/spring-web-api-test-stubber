@@ -5,6 +5,8 @@ import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.Extract
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,22 +35,31 @@ public class SpringMvcControllerGenerator {
             // @RequestMapping 붙은 메서드 추출
             List<Symbol.MethodSymbol> requestMappingAnnotatedMethods = restController.getMethodsAnnotatatedWith(RequestMapping.class);
 
+            System.out.println("#######");
+
             // 메서드 하나 별로 stub 코드 생성
             for (Symbol.MethodSymbol methodSymbol: requestMappingAnnotatedMethods) {
 
                 RequestMapping methodRequestMappingAnnotation = methodSymbol.getAnnotation(RequestMapping.class);
 
-                String[] paths = methodRequestMappingAnnotation.value();
                 RequestMethod[] methods = methodRequestMappingAnnotation.method();
+                List<String> pathList = Arrays.asList(methodRequestMappingAnnotation.value());
 
-                for (String path: paths) {
+                for (RequestMethod method: methods) {
 
-                    String apiUrl = reqMappedURL + path;
+                    // post나 put처럼 메서드는 있으나 path가 없는 경우 처리
+                    if (RequestMethod.POST.equals(method) && pathList.isEmpty())
+                        showApiEndPoint(reqMappedURL, method, methodSymbol);
 
-                    for (RequestMethod method: methods) {
+                    else if (RequestMethod.PUT.equals(method) && pathList.isEmpty())
+                        showApiEndPoint(reqMappedURL, method, methodSymbol);
 
-
+                    else {
+                        for (String path: pathList) {
+                            showApiEndPoint(reqMappedURL + path, method, methodSymbol);
+                        }
                     }
+
 
 
                 }
@@ -86,5 +97,20 @@ public class SpringMvcControllerGenerator {
          */
 
         // TODO: 클래스 단위로 파일 생성
+    }
+
+    private void showApiEndPoint(String apiUrl, RequestMethod method, Symbol.MethodSymbol methodSymbol) {
+
+        System.out.println("URL: " + apiUrl);
+        System.out.println("HTTP Method: " + method);
+        System.out.println("Handler: " + String.join(" ",
+                methodSymbol.getModifiers().toString(),
+                methodSymbol.isStatic() ? "static" : "",
+                methodSymbol.getReturnType().toString(),
+                methodSymbol.getSimpleName().toString(),
+                methodSymbol.getParameters().toString()
+        ));
+
+
     }
 }

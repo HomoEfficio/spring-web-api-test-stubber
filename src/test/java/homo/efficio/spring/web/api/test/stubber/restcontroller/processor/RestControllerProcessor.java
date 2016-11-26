@@ -53,7 +53,7 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
 
         SpringMvcControllerGenerator springMvcControllerGenerator = new SpringMvcControllerGenerator(annotatedClass);
 
-
+        springMvcControllerGenerator.generate();
     }
 
     @Override

@@ -18,7 +18,7 @@ public class RequestMappingMethodModel {
 
     private final String methodName;
 
-    public RequestMappingMethodModel(Symbol.MethodSymbol methodSymbol) {
+    RequestMappingMethodModel(Symbol.MethodSymbol methodSymbol) {
         this.requestMappingAnnotation = methodSymbol.getAnnotation(RequestMapping.class);
         this.paths = requestMappingAnnotation.value();
         this.reqMethods = requestMappingAnnotation.method();

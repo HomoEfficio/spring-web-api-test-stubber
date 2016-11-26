@@ -1,4 +1,6 @@
-package homo.efficio.spring.web.api.test.stubber.restcontroller.processor;
+package homo.efficio.spring.web.api.test.stubber.processor;
+
+import homo.efficio.spring.web.api.test.stubber.support.Messages;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -65,5 +67,9 @@ public abstract class AbstractStubberProcessor extends AbstractProcessor {
                 String.format(s, simpleName),
                 e
         );
+    }
+
+    protected void warn(Element e, String s, String simpleName) {
+        System.out.println(Messages.WARN_PREFIX + String.format(s, simpleName));
     }
 }

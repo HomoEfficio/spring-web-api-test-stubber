@@ -10,10 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
  *         created on 2016-11-23.
  */
 @RestController
+@RequestMapping("/admin")
 public class AdminController {
 
-    @RequestMapping(value = "/abc", method = RequestMethod.GET)
+    @RequestMapping(value = "/abc", method = RequestMethod.POST)
     public ResponseEntity save() {
+        return null;
+    }
+
+    @RequestMapping(value = "/abc/1")
+    public ResponseEntity find() {
         return null;
     }
 }

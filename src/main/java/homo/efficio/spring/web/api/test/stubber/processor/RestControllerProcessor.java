@@ -1,7 +1,8 @@
-package homo.efficio.spring.web.api.test.stubber.restcontroller.processor;
+package homo.efficio.spring.web.api.test.stubber.processor;
 
 import homo.efficio.spring.web.api.test.stubber.generator.SpringBootRestControllerTesterStubGenerator;
-import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.RestControllerModel;
+import homo.efficio.spring.web.api.test.stubber.model.RestControllerModel;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.processing.Completion;
@@ -10,6 +11,7 @@ import javax.lang.model.element.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -30,14 +32,18 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         Set<? extends Element> elementsAnnotatedWithRestController = roundEnv.getElementsAnnotatedWith(RestController.class);
-        for (Element restControllerAnnotatedEleemnt: elementsAnnotatedWithRestController) {
-            if (restControllerAnnotatedEleemnt.getKind() != ElementKind.CLASS) {
-                error(restControllerAnnotatedEleemnt, "@%s can be applied only to class",
+        for (Element restControllerAnnotatedElement: elementsAnnotatedWithRestController) {
+            if (restControllerAnnotatedElement.getKind() != ElementKind.CLASS) {
+                error(restControllerAnnotatedElement, "@%s can be applied only to class",
                         RestController.class.getSimpleName());
                 return true;
             }
+            if (Objects.isNull(restControllerAnnotatedElement.getAnnotation(RequestMapping.class))) {
+                warn(restControllerAnnotatedElement, "%s without @RequestMapping will not produce any @Test methods.",
+                        restControllerAnnotatedElement.getSimpleName().toString());
+            }
             // @RequestMapping 붙은 클래스
-            TypeElement restControllerTypeElement = (TypeElement) restControllerAnnotatedEleemnt;
+            TypeElement restControllerTypeElement = (TypeElement) restControllerAnnotatedElement;
 
             // 분석용 래퍼 클래스
             RestControllerModel restControllerModel = new RestControllerModel(restControllerTypeElement);

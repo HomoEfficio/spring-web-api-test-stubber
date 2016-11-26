@@ -1,4 +1,4 @@
-package homo.efficio.spring.web.api.test.stubber.restcontroller.extracted;
+package homo.efficio.spring.web.api.test.stubber.model;
 
 import com.sun.tools.javac.code.Scope;
 import com.sun.tools.javac.code.Symbol;

@@ -1,6 +1,6 @@
 package homo.efficio.spring.web.api.test.stubber.restcontroller.processor;
 
-import org.apache.commons.io.FileUtils;
+import homo.efficio.spring.web.api.test.stubber.processor.RestControllerProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,14 +34,16 @@ public class RestControllerProcessorTest {
     private List<String> getFileNamesIn(String path) {
 
         List<String> results = new ArrayList<>();
+        File[] files = new File(path).listFiles();
 
-        List<File> files = Arrays.asList(new File(path).listFiles());
-
-        for (File f: files) {
-            if (!f.isDirectory() && f.getName().toLowerCase().endsWith(".java"))
-                results.add(f.getPath());
-            else if (f.isDirectory() && !f.getName().startsWith("."))
-                results.addAll(getFileNamesIn(f.getPath()));
+        if (Objects.nonNull(files) && files.length > 0) {
+            List<File> fileList = Arrays.asList(files);
+            for (File f: fileList) {
+                if (!f.isDirectory() && f.getName().toLowerCase().endsWith(".java"))
+                    results.add(f.getPath());
+                else if (f.isDirectory() && !f.getName().startsWith("."))
+                    results.addAll(getFileNamesIn(f.getPath()));
+            }
         }
 
         return results;

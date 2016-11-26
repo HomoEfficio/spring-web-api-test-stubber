@@ -2,8 +2,9 @@ package homo.efficio.spring.web.api.test.stubber.generator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.javapoet.*;
-import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.RequestMappingMethodModel;
-import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.RestControllerModel;
+import homo.efficio.spring.web.api.test.stubber.model.RequestMappingMethodModel;
+import homo.efficio.spring.web.api.test.stubber.model.RestControllerModel;
+import homo.efficio.spring.web.api.test.stubber.support.Messages;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public class SpringBootRestControllerTesterStubGenerator {
 
-    private static final String TEST_METHOD_SUFFIX = "Test";
+    private static final String TEST_METHOD_SUFFIX = "_CHANGE_METHOD_NAME";
     private static final String OUTPUT_DIR = "src/test/java";
     private static final String OUTPUT_PKG = "YOUR.PACKAGE";
 
@@ -49,19 +50,15 @@ public class SpringBootRestControllerTesterStubGenerator {
     public void generate() throws IOException {
 
         List<MethodSpec> methodSpecs = getTestMethodSpecs();
-
         List<FieldSpec> fieldSpecs = buildFieldSpecs();
-
         MethodSpec setUp = buildSetUpSpec();
-
         TypeSpec restController = buildTypeSpec(methodSpecs, fieldSpecs, setUp);
-
         JavaFile javaFile = buildJavaFile(restController);
-
         javaFile.writeTo(new File(OUTPUT_DIR));
     }
 
     private JavaFile buildJavaFile(TypeSpec restController) {
+
         return JavaFile.builder(OUTPUT_PKG, restController)
                 .indent("    ")
                 .addStaticImport(MockMvcRequestBuilders.class, "*")
@@ -72,6 +69,7 @@ public class SpringBootRestControllerTesterStubGenerator {
     }
 
     private TypeSpec buildTypeSpec(List<MethodSpec> methodSpecs, List<FieldSpec> fieldSpecs, MethodSpec setUp) {
+
         return TypeSpec.classBuilder(this.restControllerModel.getSimpleClassName())
                 .addAnnotation(Transactional.class)
                 .addAnnotation(
@@ -93,6 +91,7 @@ public class SpringBootRestControllerTesterStubGenerator {
     }
 
     private MethodSpec buildSetUpSpec() {
+
         return MethodSpec.methodBuilder("setUp")
                 .addAnnotation(Before.class)
                 .addModifiers(Modifier.PUBLIC)
@@ -125,6 +124,7 @@ public class SpringBootRestControllerTesterStubGenerator {
     }
 
     private List<MethodSpec> getTestMethodSpecs() {
+
         List<MethodSpec> methodSpecs = new ArrayList<>();
 
         String[] reqMappedURLsOfClass = restControllerModel.getReqMappedURLs();
@@ -135,14 +135,17 @@ public class SpringBootRestControllerTesterStubGenerator {
 
             for (RequestMappingMethodModel requestMappingAnnotatedMethod: requestMappingAnnotatedMethods) {
 
-                RequestMethod[] methods = requestMappingAnnotatedMethod.getReqMethods();
+                RequestMethod[] reqMethods = requestMappingAnnotatedMethod.getReqMethods();
                 List<String> pathList = Arrays.asList(requestMappingAnnotatedMethod.getPaths());
 
-                if (methods.length == 0) {
-
+                if (reqMethods.length == 0) {
+                    System.out.println(Messages.WARN_PREFIX + String.format("@Test method for %s.%s() will not be produced, because the HTTP Method is not specified.",
+                            restControllerModel.getSimpleClassName(),
+                            requestMappingAnnotatedMethod.getMethodName())
+                    );
                 }
 
-                for (RequestMethod reqMethod: methods) {
+                for (RequestMethod reqMethod: reqMethods) {
 
                     if (RequestMethod.POST.equals(reqMethod) && pathList.isEmpty())
                         methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));

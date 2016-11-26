@@ -29,20 +29,20 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-        Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(RestController.class);
-        for (Element annotatedElement: elementsAnnotatedWith) {
-            if (annotatedElement.getKind() != ElementKind.CLASS) {
-                error(annotatedElement, "@%s can be applied only to class",
-                        org.springframework.web.bind.annotation.RestController.class.getSimpleName());
+        Set<? extends Element> elementsAnnotatedWithRestController = roundEnv.getElementsAnnotatedWith(RestController.class);
+        for (Element restControllerAnnotatedEleemnt: elementsAnnotatedWithRestController) {
+            if (restControllerAnnotatedEleemnt.getKind() != ElementKind.CLASS) {
+                error(restControllerAnnotatedEleemnt, "@%s can be applied only to class",
+                        RestController.class.getSimpleName());
                 return true;
             }
             // @RequestMapping 붙은 클래스
-            TypeElement typeElement = (TypeElement) annotatedElement;
+            TypeElement restControllerTypeElement = (TypeElement) restControllerAnnotatedEleemnt;
 
             // 분석용 래퍼 클래스
-            RestControllerModel annotatedClass = new RestControllerModel(typeElement);
+            RestControllerModel restControllerModel = new RestControllerModel(restControllerTypeElement);
 
-            generateStubFileFor(annotatedClass);
+            generateStubFileFor(restControllerModel);
         }
 
         return false;

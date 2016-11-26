@@ -37,10 +37,10 @@ public class ExtractedRestController {
     public ExtractedRestController(TypeElement annotatedClassElement) {
         this.annotatedClassElement = annotatedClassElement;
 
-        RestController restControllerAnnotation = annotatedClassElement.getAnnotation(RestController.class);
+        RestController restControllerAnnotation = this.annotatedClassElement.getAnnotation(RestController.class);
         this.annotationValue = restControllerAnnotation.value();
 
-        this.reqMappedURLs = Optional.ofNullable(annotatedClassElement.getAnnotation(RequestMapping.class))
+        this.reqMappedURLs = Optional.ofNullable(this.annotatedClassElement.getAnnotation(RequestMapping.class))
                                      .map(RequestMapping::value)
                                      .orElse(new String[] {});
 
@@ -79,7 +79,7 @@ public class ExtractedRestController {
 
     public List<Symbol.MethodSymbol> getMethodsAnnotatatedWith(Class<? extends Annotation> annotation) {
 
-        if (Symbol.ClassSymbol.class.isAssignableFrom(TypeElement.class)) {
+        if (TypeElement.class.isAssignableFrom(Symbol.ClassSymbol.class)) {
 
             Symbol.ClassSymbol annotatedClassSymbol = ((Symbol.ClassSymbol) annotatedClassElement);
             Scope members = annotatedClassSymbol.members();

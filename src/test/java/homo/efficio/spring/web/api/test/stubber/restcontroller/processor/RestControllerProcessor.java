@@ -1,12 +1,13 @@
 package homo.efficio.spring.web.api.test.stubber.restcontroller.processor;
 
-import homo.efficio.spring.web.api.test.stubber.generator.SpringMvcControllerGenerator;
+import homo.efficio.spring.web.api.test.stubber.generator.SpringBootRestControllerTesterStubGenerator;
 import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.ExtractedRestController;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        System.out.println("-------------");
+
         Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(RestController.class);
         for (Element annotatedElement: elementsAnnotatedWith) {
             if (annotatedElement.getKind() != ElementKind.CLASS) {
@@ -41,7 +42,6 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
             // 분석용 래퍼 클래스
             ExtractedRestController annotatedClass = new ExtractedRestController(typeElement);
 
-            // TODO 래퍼 클래스 던져주고 stub 생성
             generateStubFiles(annotatedClass);
         }
 
@@ -49,11 +49,15 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
     }
 
     private void generateStubFiles(ExtractedRestController annotatedClass) {
-        // TODO  stub 파일 생성
 
-        SpringMvcControllerGenerator springMvcControllerGenerator = new SpringMvcControllerGenerator(annotatedClass);
+        SpringBootRestControllerTesterStubGenerator springBootRestControllerTesterStubGenerator = new SpringBootRestControllerTesterStubGenerator(annotatedClass);
 
-        springMvcControllerGenerator.generate();
+        try {
+            springBootRestControllerTesterStubGenerator.generate();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override

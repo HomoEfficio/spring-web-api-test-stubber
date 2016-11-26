@@ -33,53 +33,79 @@ import java.util.List;
  * @author homo.efficio@gmail.com
  *         created on 2016. 11. 25..
  */
-public class SpringMvcControllerGenerator {
+public class SpringBootRestControllerTesterStubGenerator {
 
-    private static final String TEST_SUFFIX = "Test";
+    private static final String TEST_METHOD_SUFFIX = "Test";
     private static final String OUTPUT_DIR = "src/test/java";
     private static final String OUTPUT_PKG = "YOUR.PACKAGE";
 
     private ExtractedRestController restController;
-    public SpringMvcControllerGenerator(ExtractedRestController restController) {
+
+    public SpringBootRestControllerTesterStubGenerator(ExtractedRestController restController) {
         this.restController = restController;
     }
 
 
     public void generate() throws IOException {
 
-        List<MethodSpec> methodSpecs = new ArrayList<>();
+        List<MethodSpec> methodSpecs = getTestMethodSpecs();
 
-        // 클래스의 url 추출
-        String[] reqMappedURLsOfClass = restController.getReqMappedURLs();
+        List<FieldSpec> fieldSpecs = buildFieldSpecs();
 
-        for (String reqMappedURL: reqMappedURLsOfClass) {
+        MethodSpec setUp = buildSetUpSpec();
 
-            // @RequestMapping 붙은 메서드 추출
-            List<ExtractedRequestMappingMethod> requestMappingAnnotatedMethods = restController.getRequestMappingMethods();
+        TypeSpec restController = buildTypeSpec(methodSpecs, fieldSpecs, setUp);
 
-            // 메서드 하나 별로 stub 코드 생성
-            for (ExtractedRequestMappingMethod requestMappingAnnotatedMethod: requestMappingAnnotatedMethods) {
+        JavaFile javaFile = buildJavaFile(restController);
 
-                RequestMethod[] methods = requestMappingAnnotatedMethod.getReqMethods();
-                List<String> pathList = Arrays.asList(requestMappingAnnotatedMethod.getPaths());
+        javaFile.writeTo(new File(OUTPUT_DIR));
+    }
 
-                for (RequestMethod reqMethod: methods) {
+    private JavaFile buildJavaFile(TypeSpec restController) {
+        return JavaFile.builder(OUTPUT_PKG, restController)
+                .indent("    ")
+                .addStaticImport(MockMvcRequestBuilders.class, "*")
+                .addStaticImport(MockMvcResultMatchers.class, "*")
+                .addStaticImport(MockMvcResultHandlers.class, "print")
+                .addStaticImport(Matchers.class, "is")
+                .build();
+    }
 
-                    // post나 put처럼 메서드는 있으나 path가 없는 경우 처리
-                    if (RequestMethod.POST.equals(reqMethod) && pathList.isEmpty())
-                        methodSpecs.add(createMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));
+    private TypeSpec buildTypeSpec(List<MethodSpec> methodSpecs, List<FieldSpec> fieldSpecs, MethodSpec setUp) {
+        return TypeSpec.classBuilder(this.restController.getSimpleClassName())
+                .addAnnotation(Transactional.class)
+                .addAnnotation(
+                        AnnotationSpec.builder(RunWith.class)
+                                      .addMember("value", "$T.class", SpringJUnit4ClassRunner.class)
+                                      .build()
+                )
+                .addAnnotation(
+                        AnnotationSpec.builder(ComponentScan.class)
+                                      .addMember("basePackages", "{$S, $S}", "YOUR_DTOs_PACKAGE", "YOUR_SERVICEs_PACKAGE")
+                                      .build()
+                )
+                .addAnnotation(SpringBootTest.class)
+                .addModifiers(Modifier.PUBLIC)
+                .addFields(fieldSpecs)
+                .addMethod(setUp)
+                .addMethods(methodSpecs)
+                .build();
+    }
 
-                    else if (RequestMethod.PUT.equals(reqMethod) && pathList.isEmpty())
-                        methodSpecs.add(createMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));
+    private MethodSpec buildSetUpSpec() {
+        return MethodSpec.methodBuilder("setUp")
+                .addAnnotation(Before.class)
+                .addModifiers(Modifier.PUBLIC)
+                .addCode(""+
+                        "mockMvc = $T.webAppContextSetup(ctx)\n" +
+                        "    .alwaysDo(print())\n" +
+                        "    .build();",
+                        MockMvcBuilders.class
+                )
+                .build();
+    }
 
-                    else {
-                        for (String path: pathList) {
-                            methodSpecs.add(createMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL + path, reqMethod));
-                        }
-                    }
-                }
-            }
-        }
+    private List<FieldSpec> buildFieldSpecs() {
 
         FieldSpec mockMvc = FieldSpec.builder(MockMvc.class, "mockMvc")
                 .addModifiers(Modifier.PRIVATE)
@@ -95,49 +121,44 @@ public class SpringMvcControllerGenerator {
                 .addModifiers(Modifier.PRIVATE)
                 .build();
 
-        MethodSpec setUp = MethodSpec.methodBuilder("setUp")
-                .addAnnotation(Before.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addCode(""+
-                        "mockMvc = $T.webAppContextSetup(ctx)\n" +
-                        "    .alwaysDo(print())\n" +
-                        "    .build();",
-                        MockMvcBuilders.class
-                )
-                .build();
-
-        TypeSpec restController = TypeSpec.classBuilder(this.restController.getSimpleClassName())
-                .addAnnotation(Transactional.class)
-                .addAnnotation(
-                        AnnotationSpec.builder(RunWith.class)
-                                      .addMember("value", "$T.class", SpringJUnit4ClassRunner.class)
-                                      .build()
-                )
-                .addAnnotation(
-                        AnnotationSpec.builder(ComponentScan.class)
-                                      .addMember("basePackages", "{$S, $S}", "YOUR_DTOs_PACKAGE", "YOUR_SERVICEs_PACKAGE")
-                                      .build()
-                )
-                .addAnnotation(SpringBootTest.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addFields(Arrays.asList(mockMvc, ctx, objectMapper))
-                .addMethod(setUp)
-                .addMethods(methodSpecs)
-                .build();
-
-        JavaFile javaFile = JavaFile.builder(OUTPUT_PKG, restController)
-                .indent("    ")
-                .addStaticImport(MockMvcRequestBuilders.class, "*")
-                .addStaticImport(MockMvcResultMatchers.class, "*")
-                .addStaticImport(MockMvcResultHandlers.class, "print")
-                .addStaticImport(Matchers.class, "is")
-                .build();
-
-        javaFile.writeTo(new File(OUTPUT_DIR));
+        return Arrays.asList(mockMvc, ctx, objectMapper);
     }
 
-    private MethodSpec createMethodSpec(String methodName, String apiUrl, RequestMethod reqMethod) {
-        return MethodSpec.methodBuilder(methodName + TEST_SUFFIX)
+    private List<MethodSpec> getTestMethodSpecs() {
+        List<MethodSpec> methodSpecs = new ArrayList<>();
+
+        String[] reqMappedURLsOfClass = restController.getReqMappedURLs();
+
+        for (String reqMappedURL: reqMappedURLsOfClass) {
+
+            List<ExtractedRequestMappingMethod> requestMappingAnnotatedMethods = restController.getRequestMappingMethods();
+
+            for (ExtractedRequestMappingMethod requestMappingAnnotatedMethod: requestMappingAnnotatedMethods) {
+
+                RequestMethod[] methods = requestMappingAnnotatedMethod.getReqMethods();
+                List<String> pathList = Arrays.asList(requestMappingAnnotatedMethod.getPaths());
+
+                for (RequestMethod reqMethod: methods) {
+
+                    if (RequestMethod.POST.equals(reqMethod) && pathList.isEmpty())
+                        methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));
+
+                    else if (RequestMethod.PUT.equals(reqMethod) && pathList.isEmpty())
+                        methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));
+
+                    else {
+                        for (String path: pathList) {
+                            methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL + path, reqMethod));
+                        }
+                    }
+                }
+            }
+        }
+        return methodSpecs;
+    }
+
+    private MethodSpec createApiTestMethodSpec(String methodName, String apiUrl, RequestMethod reqMethod) {
+        return MethodSpec.methodBuilder(methodName + TEST_METHOD_SUFFIX)
                 .addAnnotation(Test.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(void.class)

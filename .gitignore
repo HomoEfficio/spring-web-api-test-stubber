@@ -92,4 +92,4 @@ gradle-app.setting
 ### homo.efficio ###
 .idea/
 build/
-
+src/test/java/YOUR/*

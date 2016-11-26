@@ -1,7 +1,7 @@
 package homo.efficio.spring.web.api.test.stubber.restcontroller.processor;
 
 import homo.efficio.spring.web.api.test.stubber.generator.SpringBootRestControllerTesterStubGenerator;
-import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.ExtractedRestController;
+import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.RestControllerModel;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.processing.Completion;
@@ -22,7 +22,7 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
     public Set<String> getSupportedAnnotationTypes() {
 
         Set<String> annotataions = new LinkedHashSet<String>();
-        annotataions.add(RestController.class.getCanonicalName());
+        annotataions.add(org.springframework.web.bind.annotation.RestController.class.getCanonicalName());
         return annotataions;
     }
 
@@ -33,22 +33,22 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
         for (Element annotatedElement: elementsAnnotatedWith) {
             if (annotatedElement.getKind() != ElementKind.CLASS) {
                 error(annotatedElement, "@%s can be applied only to class",
-                        RestController.class.getSimpleName());
+                        org.springframework.web.bind.annotation.RestController.class.getSimpleName());
                 return true;
             }
             // @RequestMapping 붙은 클래스
             TypeElement typeElement = (TypeElement) annotatedElement;
 
             // 분석용 래퍼 클래스
-            ExtractedRestController annotatedClass = new ExtractedRestController(typeElement);
+            RestControllerModel annotatedClass = new RestControllerModel(typeElement);
 
-            generateStubFiles(annotatedClass);
+            generateStubFileFor(annotatedClass);
         }
 
         return false;
     }
 
-    private void generateStubFiles(ExtractedRestController annotatedClass) {
+    private void generateStubFileFor(RestControllerModel annotatedClass) {
 
         SpringBootRestControllerTesterStubGenerator springBootRestControllerTesterStubGenerator = new SpringBootRestControllerTesterStubGenerator(annotatedClass);
 

@@ -2,8 +2,8 @@ package homo.efficio.spring.web.api.test.stubber.generator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.javapoet.*;
-import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.ExtractedRequestMappingMethod;
-import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.ExtractedRestController;
+import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.RequestMappingMethodModel;
+import homo.efficio.spring.web.api.test.stubber.restcontroller.extracted.RestControllerModel;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,10 +39,10 @@ public class SpringBootRestControllerTesterStubGenerator {
     private static final String OUTPUT_DIR = "src/test/java";
     private static final String OUTPUT_PKG = "YOUR.PACKAGE";
 
-    private ExtractedRestController restController;
+    private RestControllerModel restControllerModel;
 
-    public SpringBootRestControllerTesterStubGenerator(ExtractedRestController restController) {
-        this.restController = restController;
+    public SpringBootRestControllerTesterStubGenerator(RestControllerModel restControllerModel) {
+        this.restControllerModel = restControllerModel;
     }
 
 
@@ -72,7 +72,7 @@ public class SpringBootRestControllerTesterStubGenerator {
     }
 
     private TypeSpec buildTypeSpec(List<MethodSpec> methodSpecs, List<FieldSpec> fieldSpecs, MethodSpec setUp) {
-        return TypeSpec.classBuilder(this.restController.getSimpleClassName())
+        return TypeSpec.classBuilder(this.restControllerModel.getSimpleClassName())
                 .addAnnotation(Transactional.class)
                 .addAnnotation(
                         AnnotationSpec.builder(RunWith.class)
@@ -127,16 +127,20 @@ public class SpringBootRestControllerTesterStubGenerator {
     private List<MethodSpec> getTestMethodSpecs() {
         List<MethodSpec> methodSpecs = new ArrayList<>();
 
-        String[] reqMappedURLsOfClass = restController.getReqMappedURLs();
+        String[] reqMappedURLsOfClass = restControllerModel.getReqMappedURLs();
 
         for (String reqMappedURL: reqMappedURLsOfClass) {
 
-            List<ExtractedRequestMappingMethod> requestMappingAnnotatedMethods = restController.getRequestMappingMethods();
+            List<RequestMappingMethodModel> requestMappingAnnotatedMethods = restControllerModel.getRequestMappingMethodModels();
 
-            for (ExtractedRequestMappingMethod requestMappingAnnotatedMethod: requestMappingAnnotatedMethods) {
+            for (RequestMappingMethodModel requestMappingAnnotatedMethod: requestMappingAnnotatedMethods) {
 
                 RequestMethod[] methods = requestMappingAnnotatedMethod.getReqMethods();
                 List<String> pathList = Arrays.asList(requestMappingAnnotatedMethod.getPaths());
+
+                if (methods.length == 0) {
+
+                }
 
                 for (RequestMethod reqMethod: methods) {
 

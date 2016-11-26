@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author homo.efficio@gmail.com
  *         created on 2016-11-23.
  */
-public class ExtractedRequestMappingMethod {
+public class RequestMappingMethodModel {
 
     private final RequestMapping requestMappingAnnotation;
 
@@ -18,7 +18,7 @@ public class ExtractedRequestMappingMethod {
 
     private final String methodName;
 
-    public ExtractedRequestMappingMethod(Symbol.MethodSymbol methodSymbol) {
+    public RequestMappingMethodModel(Symbol.MethodSymbol methodSymbol) {
         this.requestMappingAnnotation = methodSymbol.getAnnotation(RequestMapping.class);
         this.paths = requestMappingAnnotation.value();
         this.reqMethods = requestMappingAnnotation.method();

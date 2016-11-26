@@ -26,17 +26,9 @@ public class RestControllerProcessorTest {
 
     private static final String SRC_PACKAGE_PATH = "src/test/java/homo/efficio/spring/web/api/test/stubber/restcontroller/annotated";
 
-    private int count;
-
     @Test
     public void process() throws IOException {
-        System.out.println("==== " + count++ + "th round ====");
-        System.out.println(getFileNamesIn(SRC_PACKAGE_PATH));
-
-        process(RestControllerProcessor.class,
-                getFileNamesIn(SRC_PACKAGE_PATH),
-                "generated-test-stub"
-        );
+        compile(RestControllerProcessor.class, getFileNamesIn(SRC_PACKAGE_PATH));
     }
 
     private List<String> getFileNamesIn(String path) {
@@ -55,19 +47,11 @@ public class RestControllerProcessorTest {
         return results;
     }
 
-    private void process(Class<? extends AbstractProcessor> processorClass, List<String> classes, String target) throws IOException {
-        File out = new File("src/test/java/" + target);
-        FileUtils.deleteQuietly(out);
-        if (!out.mkdirs()) {
-            Assert.fail("Creation of " + out.getPath() + " failed");
-        }
-        compile(processorClass, classes, target);
-    }
-
-    private void compile(Class<? extends AbstractProcessor> processorClass, List<String> classes, String target) throws IOException {
+    private void compile(Class<? extends AbstractProcessor> processorClass, List<String> classes) throws IOException {
         List<String> options = new ArrayList<String>();
-        options.add("-s");
-        options.add("src/test/java/" + target);
+//        Filer를 사용하지 않고 JavaPoet가 직접 파일을 생성하므로 아래 -s 옵션 불필요
+//        options.add("-s");
+//        options.add("src/test/java/" + target);
         options.add("-proc:only");
         options.add("-processor");
         options.add(processorClass.getName());

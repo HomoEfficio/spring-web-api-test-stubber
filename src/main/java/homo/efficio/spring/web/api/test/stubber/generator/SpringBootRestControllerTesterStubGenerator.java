@@ -38,8 +38,7 @@ import java.util.List;
 public class SpringBootRestControllerTesterStubGenerator {
 
     private static final String TEST_METHOD_SUFFIX = "_CHANGE_METHOD_NAME";
-    private static final String OUTPUT_DIR = "src/test/java";
-    private static final String OUTPUT_PKG = "YOUR.PACKAGE";
+    private static final String OUTPUT_PKG = "generated.YOUR.PACKAGE";
 
     private RestControllerModel restControllerModel;
     private Filer filer;

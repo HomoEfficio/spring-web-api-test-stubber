@@ -33,6 +33,7 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
 
         Set<? extends Element> elementsAnnotatedWithRestController = roundEnv.getElementsAnnotatedWith(RestController.class);
         for (Element restControllerAnnotatedElement: elementsAnnotatedWithRestController) {
+
             if (restControllerAnnotatedElement.getKind() != ElementKind.CLASS) {
                 error(restControllerAnnotatedElement, "@%s can be applied only to class",
                         RestController.class.getSimpleName());
@@ -47,7 +48,6 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
 
             // 분석용 래퍼 클래스
             RestControllerModel restControllerModel = new RestControllerModel(restControllerTypeElement);
-
             generateStubFileFor(restControllerModel);
         }
 
@@ -56,7 +56,7 @@ public class RestControllerProcessor extends AbstractStubberProcessor {
 
     private void generateStubFileFor(RestControllerModel annotatedClass) {
 
-        SpringBootRestControllerTesterStubGenerator springBootRestControllerTesterStubGenerator = new SpringBootRestControllerTesterStubGenerator(annotatedClass);
+        SpringBootRestControllerTesterStubGenerator springBootRestControllerTesterStubGenerator = new SpringBootRestControllerTesterStubGenerator(annotatedClass, filer);
 
         try {
             springBootRestControllerTesterStubGenerator.generate();

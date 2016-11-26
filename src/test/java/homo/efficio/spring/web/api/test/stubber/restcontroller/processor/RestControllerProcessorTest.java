@@ -51,9 +51,8 @@ public class RestControllerProcessorTest {
 
     private void compile(Class<? extends AbstractProcessor> processorClass, List<String> classes) throws IOException {
         List<String> options = new ArrayList<String>();
-//        Filer를 사용하지 않고 JavaPoet가 직접 파일을 생성하므로 아래 -s 옵션 불필요
-//        options.add("-s");
-//        options.add("src/test/java/" + target);
+        options.add("-s");
+        options.add("src/test/java");
         options.add("-proc:only");
         options.add("-processor");
         options.add(processorClass.getName());

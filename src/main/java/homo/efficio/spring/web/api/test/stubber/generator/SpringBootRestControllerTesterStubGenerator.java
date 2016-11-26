@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -41,9 +42,11 @@ public class SpringBootRestControllerTesterStubGenerator {
     private static final String OUTPUT_PKG = "YOUR.PACKAGE";
 
     private RestControllerModel restControllerModel;
+    private Filer filer;
 
-    public SpringBootRestControllerTesterStubGenerator(RestControllerModel restControllerModel) {
+    public SpringBootRestControllerTesterStubGenerator(RestControllerModel restControllerModel, Filer filer) {
         this.restControllerModel = restControllerModel;
+        this.filer = filer;
     }
 
 
@@ -54,7 +57,10 @@ public class SpringBootRestControllerTesterStubGenerator {
         MethodSpec setUp = buildSetUpSpec();
         TypeSpec restController = buildTypeSpec(methodSpecs, fieldSpecs, setUp);
         JavaFile javaFile = buildJavaFile(restController);
-        javaFile.writeTo(new File(OUTPUT_DIR));
+
+        // filer에 쓰지 않고, new File("DIR") 에 쓰면 클라이언트에서는 파일 써지지 않음
+        // 반드시 filer 써야함
+        javaFile.writeTo(filer);
     }
 
     private JavaFile buildJavaFile(TypeSpec restController) {

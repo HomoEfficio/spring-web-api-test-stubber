@@ -152,13 +152,9 @@ public class SpringBootRestControllerTesterStubGenerator {
 
                 for (RequestMethod reqMethod: reqMethods) {
 
-                    if (RequestMethod.POST.equals(reqMethod) && pathList.isEmpty())
+                    if (pathList.isEmpty()) {
                         methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));
-
-                    else if (RequestMethod.PUT.equals(reqMethod) && pathList.isEmpty())
-                        methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL, reqMethod));
-
-                    else {
+                    } else {
                         for (String path: pathList) {
                             methodSpecs.add(createApiTestMethodSpec(requestMappingAnnotatedMethod.getMethodName() + methodSpecs.size(), reqMappedURL + path, reqMethod));
                         }

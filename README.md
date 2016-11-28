@@ -23,6 +23,8 @@ A time-saving utility for auto-generating SpringMVC-based test stub code.
 ### 3. Create Gradle Task
 
 ```groovy
+// YOUR build.gradle
+
 //...
 
 repositories {

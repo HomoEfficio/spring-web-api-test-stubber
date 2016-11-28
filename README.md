@@ -1,39 +1,91 @@
 # Spring Web API Test Stubber
 
-스프링 기반 웹 애플리케이션의 테스트 코드 일부를 자동 생성해주는 유틸
+A time-saving utility for auto-generating SpringMVC-based test stub code.
 
 ## 36sec Teaser Movie
 
-https://youtu.be/J1rHVkxiTp8
+- RestController
+
+    https://youtu.be/J1rHVkxiTp8
 
 ## Getting Started
 
-### Build
+### 1. Build jar
 
 >./gradlew jar
 
 ![Imgur](http://i.imgur.com/9kLBvPs.png)
 
-### Move into your project Libs
+### 2. Place jar in your project library directory
 
 ![Imgur](http://i.imgur.com/z8PQNCW.png)
 
-### Create Gradle Task
+### 3. Create Gradle Task
 
 ```groovy
-// Will be update soon
+//...
 
+repositories {
+    mavenCentral()
+
+    // directory where the spring-web-api-test-stubber.jar is stored.
+    flatDir(name: "project-libs", dirs: "libs")
+}
+
+//...
+
+dependencies {
+
+    //...
+
+    // For ApiStubGenerator - start
+    compile files('libs/spring-web-api-test-stubber-1.0-SNAPSHOT.jar')
+    compile group: 'com.squareup', name: 'javapoet', version: '1.8.0'
+    compile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.4.2.RELEASE'
+    // For ApiStubGenerator - end
+
+    //...
+}
+
+//...
+
+// For ApiStubGenerator - start
+sourceSets {
+    generated {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
+
+task generateApiTestStub(type: JavaCompile, group: 'build') {
+    source = sourceSets.main.java.srcDirs
+    classpath = configurations.compile
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "homo.efficio.spring.web.api.test.stubber.processor.RestControllerProcessor"
+    ]
+    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+}
+
+//...
 ```
 
-### Execute Task
+### 4. Generate the stub file(s)
 
 >./gradlew generateApiTestStub
 
-### Enjoy testing
+The generated file(s) will be placed in `src/test/java/generated/YOUR/PACKAGE`
 
-Find the generated test codes in the **`src/test/java/generated/YOUR/PACKAGE`**, and enjoy testing!!
+![Imgur](http://i.imgur.com/kUhUoY6.png?1)
 
-## Motivated by
+### 5. Enjoy testing
+
+Just change the package, method names and write your own test codes!!
+
+
+## Inspired by
 
 - Hannes Dorfmann Blog: http://hannesdorfmann.com/annotation-processing/annotationprocessing101
 - JavaPoet: https://github.com/square/javapoet

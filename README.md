@@ -91,7 +91,7 @@ Everything is ready!!
 
 Just change the package, method names and write your own test codes!!
 
-## Customize for your own project
+## Customization for your own project
 
 This is written in Java 8 and the generated files are for Spring Boot 1.4.* by default.
 

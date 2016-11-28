@@ -196,13 +196,13 @@ public class SpringBootRestControllerTesterStubGenerator {
         } else {
             return methodBuilder
                     .addCode("" +
-                                    "$T result = mockMvc.perform(\n" +
-                                    "        $L($S)\n" +
-                                    ").andExpect(\n" +
-                                    "        status().isOk()\n" +
-                                    ").andExpect(\n" +
-                                    "        jsonPath($S).value($S)\n" +
-                                    ").andReturn();\n",
+                            "$T result = mockMvc.perform(\n" +
+                            "        $L($S)\n" +
+                            ").andExpect(\n" +
+                            "        status().isOk()\n" +
+                            ").andExpect(\n" +
+                            "        jsonPath($S).value($S)\n" +
+                            ").andReturn();\n",
                             MvcResult.class,
                             reqMethod.name().toLowerCase(),
                             apiUrl,

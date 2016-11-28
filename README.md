@@ -76,11 +76,17 @@ task generateApiTestStub(type: JavaCompile, group: 'build') {
 
 >./gradlew generateApiTestStub
 
+or just double click on the task
+
+![Imgur](http://i.imgur.com/gWI8LoY.png?1)
+
 The generated file(s) will be placed in `src/test/java/generated/YOUR/PACKAGE`
 
 ![Imgur](http://i.imgur.com/kUhUoY6.png?1)
 
 ### 5. Enjoy testing
+
+Everything is ready!!
 
 Just change the package, method names and write your own test codes!!
 

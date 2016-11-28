@@ -93,3 +93,5 @@ gradle-app.setting
 .idea/
 build/
 src/test/java/generated/YOUR/*
+.DS_Store
+

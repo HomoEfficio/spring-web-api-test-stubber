@@ -33,6 +33,11 @@ https://youtu.be/J1rHVkxiTp8
 
 Find the generated test codes in the **`src/test/java/generated/YOUR/PACKAGE`**, and enjoy testing!!
 
+## Motivated by
+
+- Hannes Dorfmann Blog: http://hannesdorfmann.com/annotation-processing/annotationprocessing101
+- JavaPoet: https://github.com/square/javapoet
+- QueryDSL: http://www.querydsl.com/
 
 ## License
 
